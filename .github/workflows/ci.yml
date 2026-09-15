@@ -1,0 +1,36 @@
+name: CI
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: Install on fresh DB + tests (${{ matrix.module }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        module: [aero_material_outtime]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pull images
+        run: docker compose pull --quiet
+      - name: Run module tests on a fresh database
+        run: scripts/test.sh ${{ matrix.module }}
+      - name: Upload Odoo test log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: odoo-test-log-${{ matrix.module }}
+          path: /tmp/odoo-test-${{ matrix.module }}.log
+
+  lint:
+    name: pre-commit (ruff, xml, yaml)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pre-commit
+      - run: pre-commit run --all-files --show-diff-on-failure

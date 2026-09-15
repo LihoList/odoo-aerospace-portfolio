@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_aero_outtime_event_tree" model="ir.ui.view">
+        <field name="name">aero.outtime.event.tree</field>
+        <field name="model">aero.outtime.event</field>
+        <field name="arch" type="xml">
+            <tree string="Out-time log" default_order="date_out desc"
+                  decoration-warning="not date_in">
+                <field name="date_out"/>
+                <field name="date_in"/>
+                <field name="duration_h" widget="float_time" sum="Total"/>
+                <field name="lot_id"/>
+                <field name="product_id"/>
+                <field name="user_id" optional="show"/>
+                <field name="note" optional="show"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_aero_outtime_event_form" model="ir.ui.view">
+        <field name="name">aero.outtime.event.form</field>
+        <field name="model">aero.outtime.event</field>
+        <field name="arch" type="xml">
+            <form string="Out-time event">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="lot_id"/>
+                            <field name="product_id"/>
+                            <field name="note"/>
+                        </group>
+                        <group>
+                            <field name="date_out"/>
+                            <field name="date_in"/>
+                            <field name="duration_h" widget="float_time"/>
+                            <field name="user_id"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_aero_outtime_event_search" model="ir.ui.view">
+        <field name="name">aero.outtime.event.search</field>
+        <field name="model">aero.outtime.event</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="lot_id"/>
+                <field name="product_id"/>
+                <filter name="open" string="Still out of freezer" domain="[('date_in', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_lot" string="Lot" context="{'group_by': 'lot_id'}"/>
+                    <filter name="group_product" string="Product" context="{'group_by': 'product_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_aero_outtime_event" model="ir.actions.act_window">
+        <field name="name">Out-time log</field>
+        <field name="res_model">aero.outtime.event</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_aero_outtime_event_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No freezer removals logged yet</p>
+            <p>Use the "Remove from freezer" button on a lot, or log an interval here.</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_aero_outtime_event"
+              name="Out-time log"
+              action="action_aero_outtime_event"
+              parent="stock.menu_stock_inventory_control"
+              groups="stock.group_production_lot"
+              sequence="110"/>
+</odoo>

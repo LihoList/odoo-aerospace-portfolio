@@ -1,0 +1,46 @@
+# Odoo 17 sandbox for the aerospace portfolio modules.
+# Start:   docker compose up -d      ->  http://localhost:8069  (mail: http://localhost:8025)
+# Tests:   scripts/test.sh <module>  ->  fresh DB, installs the module, runs its tests
+name: aero
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+      POSTGRES_DB: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo -d postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  odoo:
+    image: odoo:17.0
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8069:8069"   # web client
+      - "8072:8072"   # websocket (notifications)
+    environment:
+      HOST: db
+      USER: odoo
+      PASSWORD: odoo
+    volumes:
+      - ./addons:/mnt/extra-addons   # our modules (XML hot-reloaded with --dev=xml)
+      - odoo-data:/var/lib/odoo      # filestore + sessions
+    command: ["--dev=xml"]
+
+  mailpit:
+    # Catches every e-mail Odoo sends. In Odoo: Outgoing mail server host=mailpit, port=1025.
+    image: axllent/mailpit
+    ports:
+      - "8025:8025"
+
+volumes:
+  pgdata:
+  odoo-data:

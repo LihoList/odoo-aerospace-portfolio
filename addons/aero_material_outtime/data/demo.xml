@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Synthetic demo data for Borealis Launch Ltd (fictional). Loaded only on databases created with demo data. -->
+<odoo>
+    <record id="product_prepreg_demo" model="product.product">
+        <field name="name">Prepreg CF/Epoxy 200 gsm (synthetic)</field>
+        <field name="default_code">MAT-PP-200</field>
+        <field name="detailed_type">product</field>
+        <field name="tracking">lot</field>
+        <field name="description">Freezer-stored composite prepreg. Spec out-time limit: 240 h cumulative at 21 C.</field>
+    </record>
+
+    <record id="product_panel_demo" model="product.product">
+        <field name="name">Interstage Composite Panel (synthetic)</field>
+        <field name="default_code">STR-PNL-010</field>
+        <field name="detailed_type">product</field>
+    </record>
+
+    <record id="bom_panel_demo" model="mrp.bom">
+        <field name="product_tmpl_id" ref="product_panel_demo_product_template"/>
+        <field name="product_qty">1</field>
+        <field name="type">normal</field>
+    </record>
+    <record id="bom_panel_demo_line_prepreg" model="mrp.bom.line">
+        <field name="bom_id" ref="bom_panel_demo"/>
+        <field name="product_id" ref="product_prepreg_demo"/>
+        <field name="product_qty">1</field>
+    </record>
+
+    <!-- Lot 1: healthy, 12 h used of 240 -->
+    <record id="lot_prepreg_demo_1" model="stock.lot">
+        <field name="name">PPX-2409-001</field>
+        <field name="product_id" ref="product_prepreg_demo"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="outtime_limit_h">240</field>
+    </record>
+    <record id="outtime_event_demo_1a" model="aero.outtime.event">
+        <field name="lot_id" ref="lot_prepreg_demo_1"/>
+        <field name="date_out" eval="(DateTime.now() - timedelta(days=3, hours=8)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="date_in" eval="(DateTime.now() - timedelta(days=3)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="note">Layup WO/00021 - skin ply 1-4</field>
+    </record>
+    <record id="outtime_event_demo_1b" model="aero.outtime.event">
+        <field name="lot_id" ref="lot_prepreg_demo_1"/>
+        <field name="date_out" eval="(DateTime.now() - timedelta(days=1, hours=4)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="date_in" eval="(DateTime.now() - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="note">Layup WO/00021 - skin ply 5-8</field>
+    </record>
+
+    <!-- Lot 2: expired, 250 h used of 240 (left out over a long weekend) -->
+    <record id="lot_prepreg_demo_2" model="stock.lot">
+        <field name="name">PPX-2409-002</field>
+        <field name="product_id" ref="product_prepreg_demo"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="outtime_limit_h">240</field>
+    </record>
+    <record id="outtime_event_demo_2a" model="aero.outtime.event">
+        <field name="lot_id" ref="lot_prepreg_demo_2"/>
+        <field name="date_out" eval="(DateTime.now() - timedelta(days=20)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="date_in" eval="(DateTime.now() - timedelta(days=9, hours=14)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="note">Left on bench over long weekend - see NCR</field>
+    </record>
+
+    <!-- Lot 3: currently out of the freezer (open interval) -->
+    <record id="lot_prepreg_demo_3" model="stock.lot">
+        <field name="name">PPX-2409-003</field>
+        <field name="product_id" ref="product_prepreg_demo"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="outtime_limit_h">240</field>
+    </record>
+    <record id="outtime_event_demo_3a" model="aero.outtime.event">
+        <field name="lot_id" ref="lot_prepreg_demo_3"/>
+        <field name="date_out" eval="(DateTime.now() - timedelta(hours=2)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="note">Thawing for WO/00022</field>
+    </record>
+</odoo>

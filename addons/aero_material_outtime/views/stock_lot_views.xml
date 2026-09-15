@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Lot form: freezer buttons, out-time summary, log tab -->
+    <record id="view_production_lot_form_outtime" model="ir.ui.view">
+        <field name="name">stock.lot.form.outtime</field>
+        <field name="model">stock.lot</field>
+        <field name="inherit_id" ref="stock.view_production_lot_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="action_outtime_remove" type="object"
+                            string="Remove from freezer" class="btn-primary"
+                            invisible="not outtime_limit_h or outtime_open or outtime_expired"/>
+                    <button name="action_outtime_return" type="object"
+                            string="Return to freezer" class="btn-primary"
+                            invisible="not outtime_open"/>
+                </header>
+            </xpath>
+            <xpath expr="//field[@name='ref']" position="after">
+                <field name="outtime_limit_h" widget="float_time"/>
+            </xpath>
+            <xpath expr="//group[@name='main_group']" position="after">
+                <group string="Out-time control" name="outtime_group"
+                       invisible="not outtime_limit_h">
+                    <group>
+                        <field name="outtime_used_h" widget="float_time"/>
+                        <field name="outtime_remaining_h" widget="float_time"
+                               decoration-danger="outtime_expired"
+                               decoration-warning="not outtime_expired and outtime_remaining_h &lt; 24"/>
+                    </group>
+                    <group>
+                        <field name="outtime_open" widget="boolean_toggle" readonly="1"/>
+                        <field name="outtime_expired" widget="boolean_toggle" readonly="1"/>
+                    </group>
+                </group>
+            </xpath>
+            <xpath expr="//page[@name='description']" position="after">
+                <page string="Out-time log" name="outtime_log"
+                      invisible="not outtime_limit_h and not outtime_event_ids">
+                    <field name="outtime_event_ids">
+                        <tree editable="bottom" decoration-warning="not date_in">
+                            <field name="date_out"/>
+                            <field name="date_in"/>
+                            <field name="duration_h" widget="float_time" sum="Total"/>
+                            <field name="note"/>
+                            <field name="user_id"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Lot list: see expired material at a glance -->
+    <record id="view_production_lot_tree_outtime" model="ir.ui.view">
+        <field name="name">stock.lot.tree.outtime</field>
+        <field name="model">stock.lot</field>
+        <field name="inherit_id" ref="stock.view_production_lot_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_id']" position="after">
+                <field name="outtime_remaining_h" widget="float_time" optional="hide"/>
+                <field name="outtime_expired" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
