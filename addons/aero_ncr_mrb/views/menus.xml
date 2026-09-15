@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_aero_quality_root" name="Quality" sequence="45"
+              groups="aero_ncr_mrb.group_aero_ncr_user"/>
+    <menuitem id="menu_aero_ncr" name="Nonconformances" parent="menu_aero_quality_root"
+              action="action_aero_ncr" sequence="10"/>
+    <menuitem id="menu_aero_quality_config" name="Configuration" parent="menu_aero_quality_root"
+              sequence="90" groups="aero_ncr_mrb.group_aero_quality_manager"/>
+    <menuitem id="menu_aero_ncr_defect_type" name="Defect types" parent="menu_aero_quality_config"
+              action="action_aero_ncr_defect_type" sequence="10"/>
+</odoo>

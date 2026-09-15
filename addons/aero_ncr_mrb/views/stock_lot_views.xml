@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_production_lot_form_ncr" model="ir.ui.view">
+        <field name="name">stock.lot.form.ncr</field>
+        <field name="model">stock.lot</field>
+        <field name="inherit_id" ref="stock.view_production_lot_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_ncrs" type="object" class="oe_stat_button" icon="fa-exclamation-triangle">
+                    <field name="ncr_count" widget="statinfo" string="NCRs"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -8,7 +8,7 @@ conventions so it is cheap to carry across major Odoo versions.
 | Module | Business problem | Status |
 |---|---|---|
 | [`aero_material_outtime`](addons/aero_material_outtime/) | Freezer-controlled composites (prepregs, film adhesives): cumulative out-time per lot, blocks MO completion on expired material | tests passing |
-| `aero_ncr_mrb` | Nonconformance reports and Material Review Board dispositions (use-as-is / rework / scrap / return) that drive stock moves | planned |
+| [`aero_ncr_mrb`](addons/aero_ncr_mrb/) | Nonconformance reports with automatic quarantine, MRB dispositions (use-as-is / rework / repair / scrap / return) that drive real stock moves, engineering-approval and CAPA gates, PDF | tests passing |
 | Migration case 17 -> 19 | Port a module with Odoo's `upgrade_code`, document what breaks and why | planned |
 
 ## Run it in 5 minutes

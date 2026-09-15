@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_aero_ncr_user,aero.ncr user,model_aero_ncr,group_aero_ncr_user,1,1,1,0
+access_aero_ncr_manager,aero.ncr manager,model_aero_ncr,group_aero_quality_manager,1,1,1,1
+access_aero_ncr_defect_type_user,aero.ncr.defect.type user,model_aero_ncr_defect_type,group_aero_ncr_user,1,0,0,0
+access_aero_ncr_defect_type_manager,aero.ncr.defect.type manager,model_aero_ncr_defect_type,group_aero_quality_manager,1,1,1,1

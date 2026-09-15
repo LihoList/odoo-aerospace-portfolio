@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        module: [aero_material_outtime]
+        module: [aero_material_outtime, aero_ncr_mrb]
     steps:
       - uses: actions/checkout@v4
       - name: Pull images

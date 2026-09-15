@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_aero_ncr_form" model="ir.ui.view">
+        <field name="name">aero.ncr.form</field>
+        <field name="model">aero.ncr</field>
+        <field name="arch" type="xml">
+            <form string="Nonconformance Report">
+                <header>
+                    <button name="action_submit" type="object" string="Submit &amp; quarantine"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_start_mrb" type="object" string="Start MRB review"
+                            class="btn-primary" invisible="state != 'open'"
+                            groups="aero_ncr_mrb.group_aero_quality_manager"/>
+                    <button name="action_engineering_approve" type="object" string="Engineering approval"
+                            invisible="state != 'mrb' or not requires_engineering or eng_approver_id"
+                            groups="aero_ncr_mrb.group_aero_engineering"/>
+                    <button name="action_disposition" type="object" string="Apply disposition"
+                            class="btn-primary" invisible="state != 'mrb'"
+                            groups="aero_ncr_mrb.group_aero_quality_manager"/>
+                    <button name="action_close" type="object" string="Close"
+                            class="btn-primary" invisible="state != 'dispositioned'"
+                            groups="aero_ncr_mrb.group_aero_quality_manager"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('closed', 'cancel')"
+                            confirm="Cancel this NCR? Quarantined material will be released back to stock."/>
+                    <button name="action_reset_draft" type="object" string="Reset to draft"
+                            invisible="state != 'cancel'"
+                            groups="aero_ncr_mrb.group_aero_quality_manager"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,open,mrb,dispositioned,closed"/>
+                </header>
+                <sheet>
+                    <!-- check_company fields build their domain from company_id: it must be
+                         in the view unrestricted, the visible copy below is group-limited -->
+                    <field name="company_id" invisible="1"/>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_stock_moves" type="object" class="oe_stat_button"
+                                icon="fa-exchange" invisible="stock_move_count == 0">
+                            <field name="stock_move_count" widget="statinfo" string="Stock moves"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Nonconforming item">
+                            <field name="product_id" readonly="state != 'draft'"/>
+                            <field name="tracking" invisible="1"/>
+                            <field name="lot_id" readonly="state != 'draft'"
+                                   required="tracking != 'none'" invisible="tracking == 'none'"/>
+                            <label for="qty_nonconforming"/>
+                            <div class="o_row">
+                                <field name="qty_nonconforming" readonly="state != 'draft'"/>
+                                <field name="product_uom_id"/>
+                            </div>
+                            <field name="defect_type_id" readonly="state not in ('draft', 'open')"/>
+                            <field name="requirement" readonly="state not in ('draft', 'open')"/>
+                        </group>
+                        <group string="Detection">
+                            <field name="source" readonly="state != 'draft'"/>
+                            <field name="severity" readonly="state in ('closed', 'cancel')"/>
+                            <field name="date_detected" readonly="state != 'draft'"/>
+                            <field name="detected_by_id"/>
+                            <field name="production_id" readonly="state != 'draft'"/>
+                            <field name="picking_id" readonly="state != 'draft'"/>
+                            <field name="partner_id" readonly="state in ('dispositioned', 'closed', 'cancel')"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Nonconformance" name="description">
+                            <field name="description" readonly="state not in ('draft', 'open')"
+                                   placeholder="Requirement (drawing / spec / procedure) vs. what was actually found. Include measurements."/>
+                        </page>
+                        <page string="MRB disposition" name="mrb" invisible="state == 'draft'">
+                            <group>
+                                <group>
+                                    <field name="disposition" readonly="state != 'mrb'"/>
+                                    <field name="requires_engineering" invisible="1"/>
+                                    <field name="disposition_note" readonly="state != 'mrb'"
+                                           placeholder="Why this disposition is acceptable; rework/repair instructions; references."/>
+                                </group>
+                                <group>
+                                    <field name="mrb_user_id"/>
+                                    <field name="mrb_date"/>
+                                    <field name="eng_approver_id" invisible="not requires_engineering"/>
+                                    <field name="eng_approval_date" invisible="not requires_engineering"/>
+                                </group>
+                            </group>
+                            <div class="alert alert-warning" role="alert"
+                                 invisible="not requires_engineering or eng_approver_id or state != 'mrb'">
+                                <b>Use-as-is</b> and <b>repair</b> need Engineering Authority approval before the disposition can be applied (AS9100 8.7.2).
+                            </div>
+                        </page>
+                        <page string="Root cause &amp; CAPA" name="capa" invisible="state in ('draft', 'open')">
+                            <group>
+                                <field name="root_cause" readonly="state in ('closed', 'cancel')"/>
+                                <field name="corrective_action" readonly="state in ('closed', 'cancel')"/>
+                                <field name="closed_by_id" invisible="state != 'closed'"/>
+                                <field name="date_closed" invisible="state != 'closed'"/>
+                            </group>
+                        </page>
+                        <page string="Stock trail" name="stock" invisible="state == 'draft'">
+                            <group>
+                                <field name="quarantine_move_id"/>
+                                <field name="release_move_id" invisible="not release_move_id"/>
+                                <field name="scrap_id" invisible="not scrap_id"/>
+                                <field name="return_picking_id" invisible="not return_picking_id"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_aero_ncr_tree" model="ir.ui.view">
+        <field name="name">aero.ncr.tree</field>
+        <field name="model">aero.ncr</field>
+        <field name="arch" type="xml">
+            <tree string="Nonconformance Reports" sample="1"
+                  decoration-danger="severity == 'critical' and state not in ('closed', 'cancel')"
+                  decoration-muted="state in ('closed', 'cancel')">
+                <field name="name"/>
+                <field name="date_detected"/>
+                <field name="product_id"/>
+                <field name="lot_id" optional="show"/>
+                <field name="qty_nonconforming" sum="Qty"/>
+                <field name="defect_type_id"/>
+                <field name="source" optional="hide"/>
+                <field name="severity" widget="badge"
+                       decoration-danger="severity == 'critical'"
+                       decoration-warning="severity == 'major'"/>
+                <field name="disposition" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-info="state in ('open', 'mrb')"
+                       decoration-success="state == 'closed'"
+                       decoration-warning="state == 'dispositioned'"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_aero_ncr_search" model="ir.ui.view">
+        <field name="name">aero.ncr.search</field>
+        <field name="model">aero.ncr</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="product_id"/>
+                <field name="lot_id"/>
+                <field name="defect_type_id"/>
+                <filter name="active_ncr" string="In progress" domain="[('state', 'not in', ('closed', 'cancel'))]"/>
+                <filter name="quarantined" string="Awaiting MRB" domain="[('state', '=', 'open')]"/>
+                <filter name="mrb" string="In MRB review" domain="[('state', '=', 'mrb')]"/>
+                <filter name="critical" string="Critical" domain="[('severity', '=', 'critical')]"/>
+                <separator/>
+                <filter name="mine" string="Detected by me" domain="[('detected_by_id', '=', uid)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_defect" string="Defect type" context="{'group_by': 'defect_type_id'}"/>
+                    <filter name="group_severity" string="Severity" context="{'group_by': 'severity'}"/>
+                    <filter name="group_disposition" string="Disposition" context="{'group_by': 'disposition'}"/>
+                    <filter name="group_product" string="Product" context="{'group_by': 'product_id'}"/>
+                    <filter name="group_month" string="Month detected" context="{'group_by': 'date_detected:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_aero_ncr_graph" model="ir.ui.view">
+        <field name="name">aero.ncr.graph</field>
+        <field name="model">aero.ncr</field>
+        <field name="arch" type="xml">
+            <graph string="NCRs by defect type" type="bar" stacked="1">
+                <field name="defect_type_id"/>
+                <field name="severity"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_aero_ncr_pivot" model="ir.ui.view">
+        <field name="name">aero.ncr.pivot</field>
+        <field name="model">aero.ncr</field>
+        <field name="arch" type="xml">
+            <pivot string="NCR analysis">
+                <field name="defect_type_id" type="row"/>
+                <field name="disposition" type="col"/>
+                <field name="qty_nonconforming" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_aero_ncr" model="ir.actions.act_window">
+        <field name="name">Nonconformances</field>
+        <field name="res_model">aero.ncr</field>
+        <field name="view_mode">tree,form,graph,pivot</field>
+        <field name="search_view_id" ref="view_aero_ncr_search"/>
+        <field name="context">{'search_default_active_ncr': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No nonconformances yet</p>
+            <p>Raise an NCR when a part, lot or process does not meet its requirement.
+               Submitting it quarantines the material until the MRB decides.</p>
+        </field>
+    </record>
+</odoo>

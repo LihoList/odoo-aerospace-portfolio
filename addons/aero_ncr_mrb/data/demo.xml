@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Synthetic demo data for Borealis Launch Ltd (fictional). Loaded only with demo data. -->
+<odoo>
+    <record id="partner_supplier_demo" model="res.partner">
+        <field name="name">Northern Alloys Ltd (synthetic)</field>
+        <field name="is_company" eval="True"/>
+    </record>
+
+    <record id="product_bar_demo" model="product.product">
+        <field name="name">Ti-6Al-4V bar stock 25 mm (synthetic)</field>
+        <field name="default_code">MAT-TI-025</field>
+        <field name="detailed_type">product</field>
+        <field name="tracking">lot</field>
+    </record>
+    <record id="product_injector_demo" model="product.product">
+        <field name="name">Injector Face Plate, AM (synthetic)</field>
+        <field name="default_code">ENG-INJ-004</field>
+        <field name="detailed_type">product</field>
+        <field name="tracking">lot</field>
+    </record>
+
+    <record id="lot_bar_demo_1" model="stock.lot">
+        <field name="name">TI-2408-017</field>
+        <field name="product_id" ref="product_bar_demo"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="lot_bar_demo_2" model="stock.lot">
+        <field name="name">INJ-B0042</field>
+        <field name="product_id" ref="product_injector_demo"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="lot_bar_demo_3" model="stock.lot">
+        <field name="name">INJ-B0043</field>
+        <field name="product_id" ref="product_injector_demo"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+
+    <record id="ncr_demo_1" model="aero.ncr">
+        <field name="product_id" ref="product_bar_demo"/>
+        <field name="lot_id" ref="lot_bar_demo_1"/>
+        <field name="qty_nonconforming">2</field>
+        <field name="source">receiving</field>
+        <field name="severity">major</field>
+        <field name="defect_type_id" ref="defect_cert"/>
+        <field name="partner_id" ref="partner_supplier_demo"/>
+        <field name="requirement">PO flow-down: cert per AMS 4928, heat number on cert</field>
+        <field name="description">Mill certificate shows heat H-77012; bar stencil reads H-77021. 2 of 6 bars affected. Traceability broken until supplier confirms.</field>
+    </record>
+
+    <record id="ncr_demo_2" model="aero.ncr">
+        <field name="product_id" ref="product_injector_demo"/>
+        <field name="lot_id" ref="lot_bar_demo_2"/>
+        <field name="qty_nonconforming">1</field>
+        <field name="source">final</field>
+        <field name="severity">minor</field>
+        <field name="defect_type_id" ref="defect_surf"/>
+        <field name="requirement">DWG ENG-INJ-004 rev C, note 7: Ra 1.6 um max on faces A and B</field>
+        <field name="description">Face B measured Ra 1.8 um (Mitutoyo SJ-210, cal due 2026-11-02). Face A conforming.</field>
+    </record>
+
+    <record id="ncr_demo_3" model="aero.ncr">
+        <field name="product_id" ref="product_injector_demo"/>
+        <field name="lot_id" ref="lot_bar_demo_3"/>
+        <field name="qty_nonconforming">1</field>
+        <field name="source">in_process</field>
+        <field name="severity">major</field>
+        <field name="defect_type_id" ref="defect_por"/>
+        <field name="requirement">CT acceptance class B per AM-SPEC-012</field>
+        <field name="description">CT scan shows pore cluster 0.9 mm at injector channel 14; class B limit 0.5 mm.</field>
+    </record>
+
+    <record id="ncr_demo_4" model="aero.ncr">
+        <field name="product_id" ref="product_bar_demo"/>
+        <field name="lot_id" ref="lot_bar_demo_1"/>
+        <field name="qty_nonconforming">1</field>
+        <field name="source">in_process</field>
+        <field name="severity">minor</field>
+        <field name="defect_type_id" ref="defect_dmg"/>
+        <field name="requirement">Handling procedure HP-03</field>
+        <field name="description">Draft: 40 mm scratch on bar end from chuck jaw, outside the finished length.</field>
+    </record>
+
+    <function model="aero.ncr" name="_demo_setup"/>
+</odoo>

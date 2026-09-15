@@ -4,7 +4,7 @@
 set -euo pipefail
 export MSYS_NO_PATHCONV=1
 cd "$(dirname "$0")/.."
-MODULES="${1:-stock,mrp,purchase,maintenance,aero_material_outtime}"
+MODULES="${1:-stock,mrp,purchase,maintenance,aero_material_outtime,aero_ncr_mrb}"
 
 docker compose up -d --wait db
 docker compose stop odoo >/dev/null 2>&1 || true

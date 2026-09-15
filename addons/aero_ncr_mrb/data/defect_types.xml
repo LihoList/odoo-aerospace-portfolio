@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="defect_dim" model="aero.ncr.defect.type"><field name="code">DIM</field><field name="name">Dimensional out of tolerance</field><field name="sequence">10</field></record>
+    <record id="defect_surf" model="aero.ncr.defect.type"><field name="code">SURF</field><field name="name">Surface finish / cosmetic</field><field name="sequence">20</field></record>
+    <record id="defect_por" model="aero.ncr.defect.type"><field name="code">POR</field><field name="name">Porosity / void (AM, casting, composite)</field><field name="sequence">30</field></record>
+    <record id="defect_cert" model="aero.ncr.defect.type"><field name="code">CERT</field><field name="name">Material certification missing or mismatched</field><field name="sequence">40</field></record>
+    <record id="defect_outt" model="aero.ncr.defect.type"><field name="code">OUTT</field><field name="name">Out-time / shelf life exceeded</field><field name="sequence">50</field></record>
+    <record id="defect_fod" model="aero.ncr.defect.type"><field name="code">FOD</field><field name="name">Foreign object debris</field><field name="sequence">60</field></record>
+    <record id="defect_proc" model="aero.ncr.defect.type"><field name="code">PROC</field><field name="name">Process deviation (parameters, sequence, operator qualification)</field><field name="sequence">70</field></record>
+    <record id="defect_dmg" model="aero.ncr.defect.type"><field name="code">DMG</field><field name="name">Handling / transport damage</field><field name="sequence">80</field></record>
+    <record id="defect_rev" model="aero.ncr.defect.type"><field name="code">REV</field><field name="name">Wrong part or drawing revision</field><field name="sequence">90</field></record>
+</odoo>

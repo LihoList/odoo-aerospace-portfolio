@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_ncr" model="ir.actions.report">
+        <field name="name">Nonconformance Report</field>
+        <field name="model">aero.ncr</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">aero_ncr_mrb.report_ncr</field>
+        <field name="report_file">aero_ncr_mrb.report_ncr</field>
+        <field name="print_report_name">'NCR - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_aero_ncr"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_ncr">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Nonconformance Report <span t-field="doc.name"/></h2>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <strong>Status:</strong> <span t-field="doc.state"/><br/>
+                                <strong>Severity:</strong> <span t-field="doc.severity"/><br/>
+                                <strong>Source:</strong> <span t-field="doc.source"/><br/>
+                                <strong>Detected:</strong> <span t-field="doc.date_detected"/> by <span t-field="doc.detected_by_id"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Product:</strong> <span t-field="doc.product_id"/><br/>
+                                <strong>Lot / Serial:</strong> <span t-field="doc.lot_id"/><br/>
+                                <strong>Quantity:</strong> <span t-field="doc.qty_nonconforming"/> <span t-field="doc.product_uom_id"/><br/>
+                                <strong>Defect type:</strong> <span t-field="doc.defect_type_id"/>
+                            </div>
+                        </div>
+                        <table class="table table-sm table-bordered">
+                            <tr><th style="width:25%">Requirement</th><td><span t-field="doc.requirement"/></td></tr>
+                            <tr><th>Nonconformance</th><td><span t-field="doc.description"/></td></tr>
+                            <tr t-if="doc.production_id"><th>Manufacturing order</th><td><span t-field="doc.production_id"/></td></tr>
+                            <tr t-if="doc.picking_id"><th>Transfer</th><td><span t-field="doc.picking_id"/></td></tr>
+                            <tr t-if="doc.partner_id"><th>Supplier / customer</th><td><span t-field="doc.partner_id"/></td></tr>
+                        </table>
+
+                        <h4>MRB disposition</h4>
+                        <table class="table table-sm table-bordered">
+                            <tr><th style="width:25%">Disposition</th><td><span t-field="doc.disposition"/></td></tr>
+                            <tr><th>Rationale / instructions</th><td><span t-field="doc.disposition_note"/></td></tr>
+                            <tr><th>MRB chair</th><td><span t-field="doc.mrb_user_id"/> <span t-field="doc.mrb_date"/></td></tr>
+                            <tr t-if="doc.requires_engineering"><th>Engineering approval</th>
+                                <td><span t-field="doc.eng_approver_id"/> <span t-field="doc.eng_approval_date"/></td></tr>
+                            <tr t-if="doc.scrap_id"><th>Scrap</th><td><span t-field="doc.scrap_id.name"/></td></tr>
+                            <tr t-if="doc.return_picking_id"><th>Return transfer</th><td><span t-field="doc.return_picking_id.name"/></td></tr>
+                        </table>
+
+                        <h4>Root cause and corrective action</h4>
+                        <table class="table table-sm table-bordered">
+                            <tr><th style="width:25%">Root cause</th><td><span t-field="doc.root_cause"/></td></tr>
+                            <tr><th>Corrective action</th><td><span t-field="doc.corrective_action"/></td></tr>
+                            <tr><th>Closed</th><td><span t-field="doc.closed_by_id"/> <span t-field="doc.date_closed"/></td></tr>
+                        </table>
+
+                        <div class="row mt-5">
+                            <div class="col-4">Quality: ______________________</div>
+                            <div class="col-4">Engineering: ______________________</div>
+                            <div class="col-4">Production: ______________________</div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
