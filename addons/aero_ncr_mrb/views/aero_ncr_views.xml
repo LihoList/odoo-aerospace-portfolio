@@ -111,7 +111,7 @@
                         </page>
                     </notebook>
                 </sheet>
-                <!-- 19: the web client only compiles <chatter/>; the 17-style chatter div renders as a plain div -->
+                <!-- 19: the web client only compiles <chatter/>; the 17-style chatter div is no longer compiled into a chatter -->
                 <chatter/>
             </form>
         </field>
