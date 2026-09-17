@@ -1,0 +1,3 @@
+/mnt/extra-addons/aero_material_outtime/models/aero_outtime_event.py
+/mnt/extra-addons/aero_material_outtime/views/aero_outtime_event_views.xml
+/mnt/extra-addons/aero_material_outtime/views/stock_lot_views.xml
