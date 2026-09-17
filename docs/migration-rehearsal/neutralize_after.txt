@@ -1,0 +1,35 @@
+== ir_mail_server (id,name,host,active,has_user,has_pass)
+id | name | smtp_host | active | ?column? | ?column?
+1 | Simulated production SMTP (rehearsal seed) | mailpit | f | f | f
+2 | neutralization - disable emails | invalid | t | f | f
+(2 rows)
+== ir_cron active/inactive
+active | count
+f | 18
+t | 1
+(2 rows)
+== ir_cron still active
+id | ?column?
+1 | Base: Auto-vacuum internal data
+(1 row)
+== config params
+key | value
+database.is_neutralized | true
+database.secret | dummys...
+(2 rows)
+== neutralize banner view
+key | active
+web.neutralize_banner | t
+(1 row)
+== payment_provider states
+state | count
+disabled | 16
+(1 row)
+== iap_account tokens
+id | service_name | right
+1 | partner_autocomplete | 7+disabled
+(1 row)
+== fetchmail / devices / mail_template with server
+fetchmail_active | devices | tmpl_with_server
+0 | 0 | 0
+(1 row)

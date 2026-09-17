@@ -1,0 +1,49 @@
+== ir_mail_server (id,name,host,active,has_user,has_pass)
+id | name | smtp_host | active | ?column? | ?column?
+1 | Simulated production SMTP (rehearsal seed) | mailpit | t | t | t
+(1 row)
+== ir_cron active/inactive
+active | count
+f | 2
+t | 17
+(2 rows)
+== ir_cron still active
+id | ?column?
+1 | Base: Auto-vacuum internal data
+2 | Base: Portal Users Deletion
+8 | Mail: send web push notification
+3 | Mail: Email Queue Manager
+4 | Publisher: Update Notification
+5 | Notification: Delete Notifications older than 6 Month
+7 | Notification: Send scheduled message notifications
+9 | Discuss: channel member unmute
+10 | Users: Notify About Unregistered Users
+11 | Partner Autocomplete: Sync with remote DB
+12 | SMS: SMS Queue Manager
+13 | Snailmail: process letters queue
+14 | Digest Emails
+16 | Account: Post draft entries with auto_post enabled and accounting date up to today
+17 | Send invoices automatically
+18 | Procurement: run scheduler
+19 | Purchase reminder
+(17 rows)
+== config params
+key | value
+database.secret | 0aedd8...
+(1 row)
+== neutralize banner view
+key | active
+web.neutralize_banner | f
+(1 row)
+== payment_provider states
+state | count
+disabled | 16
+(1 row)
+== iap_account tokens
+id | service_name | right
+1 | partner_autocomplete | 36c97a6e97
+(1 row)
+== fetchmail / devices / mail_template with server
+fetchmail_active | devices | tmpl_with_server
+0 | 0 | 0
+(1 row)

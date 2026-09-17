@@ -1,0 +1,65 @@
+## counts
+metric,value
+res_partner,16
+res_partner_active,12
+product_product,68
+stock_lot,20
+stock_move_done,56
+stock_move_all,93
+stock_quant_rows_internal,43
+stock_quant_qty_internal_total,1554.0000
+aero_outtime_event,4
+ir_attachment_file,851
+## aero_ncr by state
+state,count
+closed,1
+dispositioned,1
+mrb,1
+open,1
+## mrp_production by state
+state,count
+confirmed,2
+done,3
+draft,1
+## purchase_order by state
+state,count
+draft,6
+purchase,4
+sent,1
+## stock_quant sum(quantity) by product + internal location
+default_code,product_id,location,qty
+FURN_7800,8,WH/Stock,60.0000
+FURN_0096,12,WH/Stock,45.0000
+FURN_0097,13,WH/Stock,50.0000
+FURN_0098,14,WH/Stock,55.0000
+E-COM07,17,CHIC1/Stock,200.0000
+E-COM07,17,WH/Stock,500.0000
+E-COM08,18,WH/Stock,18.0000
+E-COM10,20,WH/Stock,22.0000
+E-COM11,21,WH/Stock,33.0000
+E-COM12,23,WH/Stock,26.0000
+E-COM13,24,WH/Stock,30.0000
+FURN_0269,25,WH/Stock,9.0000
+FURN_1118,26,WH/Stock,2.0000
+FURN_7888,29,WH/Stock,-1.0000
+FURN_0789,30,WH/Stock,16.0000
+FURN_6666,31,WH/Stock,16.0000
+FURN_8855,32,WH/Stock,183.0000
+FURN_5555,36,WH/Stock/Shelf 2,90.0000
+FURN_9666,37,WH/Stock,1.0000
+FURN_8522,38,WH/Stock,5.0000
+FURN_7111,42,WH/Stock,20.0000
+FURN_8111,43,WH/Stock,30.0000
+FURN_7023,45,WH/Stock,50.0000
+FURN_2100,48,WH/Stock,45.0000
+FURN_5623,49,WH/Stock,45.0000
+MAT-TI-025,52,WH/Stock,3.0000
+MAT-TI-025,52,WH/Stock/Quarantine,3.0000
+ENG-INJ-004,53,WH/Stock,5.0000
+ENG-INJ-004,53,WH/Stock/Quarantine,0.0000
+FURN_0009,56,WH/Stock,-1.0000
+FURN_0008,57,WH/Stock,-1.0000
+FURN_0004,58,WH/Stock,-1.0000
+FURN_0001,59,WH/Stock,-1.0000
+FURN_0005,60,WH/Stock,-1.0000
+FURN_0006,61,WH/Stock,-2.0000
