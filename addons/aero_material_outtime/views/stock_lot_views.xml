@@ -38,13 +38,13 @@
                 <page string="Out-time log" name="outtime_log"
                       invisible="not outtime_limit_h and not outtime_event_ids">
                     <field name="outtime_event_ids">
-                        <tree editable="bottom" decoration-warning="not date_in">
+                        <list editable="bottom" decoration-warning="not date_in">
                             <field name="date_out"/>
                             <field name="date_in"/>
                             <field name="duration_h" widget="float_time" sum="Total"/>
                             <field name="note"/>
                             <field name="user_id"/>
-                        </tree>
+                        </list>
                     </field>
                 </page>
             </xpath>

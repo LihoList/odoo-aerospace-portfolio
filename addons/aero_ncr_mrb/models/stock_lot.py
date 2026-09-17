@@ -18,7 +18,7 @@ class StockLot(models.Model):
             "type": "ir.actions.act_window",
             "name": _("NCRs of %s") % self.name,
             "res_model": "aero.ncr",
-            "view_mode": "tree,form",
+            "view_mode": "list,form",
             "domain": [("lot_id", "=", self.id)],
             "context": {
                 "default_lot_id": self.id,

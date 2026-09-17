@@ -14,9 +14,10 @@ class AeroNcrDefectType(models.Model):
     active = fields.Boolean(default=True)
     description = fields.Text()
 
-    _sql_constraints = [
-        ("code_uniq", "unique(code)", "Defect type codes must be unique."),
-    ]
+    _code_uniq = models.Constraint(
+        "unique(code)",
+        "Defect type codes must be unique.",
+    )
 
     def _compute_display_name(self):
         for rec in self:

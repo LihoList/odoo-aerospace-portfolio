@@ -124,7 +124,7 @@
         <field name="name">aero.ncr.tree</field>
         <field name="model">aero.ncr</field>
         <field name="arch" type="xml">
-            <tree string="Nonconformance Reports" sample="1"
+            <list string="Nonconformance Reports" sample="1"
                   decoration-danger="severity == 'critical' and state not in ('closed', 'cancel')"
                   decoration-muted="state in ('closed', 'cancel')">
                 <field name="name"/>
@@ -143,7 +143,7 @@
                        decoration-success="state == 'closed'"
                        decoration-warning="state == 'dispositioned'"/>
                 <field name="company_id" groups="base.group_multi_company" optional="hide"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -200,7 +200,7 @@
     <record id="action_aero_ncr" model="ir.actions.act_window">
         <field name="name">Nonconformances</field>
         <field name="res_model">aero.ncr</field>
-        <field name="view_mode">tree,form,graph,pivot</field>
+        <field name="view_mode">list,form,graph,pivot</field>
         <field name="search_view_id" ref="view_aero_ncr_search"/>
         <field name="context">{'search_default_active_ncr': 1}</field>
         <field name="help" type="html">

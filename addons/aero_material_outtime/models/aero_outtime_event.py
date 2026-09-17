@@ -27,13 +27,10 @@ class AeroOuttimeEvent(models.Model):
     )
     note = fields.Char("Reason / work order")
 
-    _sql_constraints = [
-        (
-            "check_dates",
-            "CHECK(date_in IS NULL OR date_in >= date_out)",
-            "Return time must be after removal time.",
-        ),
-    ]
+    _check_dates = models.Constraint(
+        "CHECK(date_in IS NULL OR date_in >= date_out)",
+        "Return time must be after removal time.",
+    )
 
     @api.depends("date_out", "date_in")
     def _compute_duration_h(self):

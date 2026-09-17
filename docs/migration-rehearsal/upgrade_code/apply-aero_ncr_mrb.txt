@@ -1,0 +1,5 @@
+/mnt/extra-addons/aero_ncr_mrb/models/aero_ncr.py
+/mnt/extra-addons/aero_ncr_mrb/models/aero_ncr_defect_type.py
+/mnt/extra-addons/aero_ncr_mrb/models/stock_lot.py
+/mnt/extra-addons/aero_ncr_mrb/views/aero_ncr_defect_type_views.xml
+/mnt/extra-addons/aero_ncr_mrb/views/aero_ncr_views.xml

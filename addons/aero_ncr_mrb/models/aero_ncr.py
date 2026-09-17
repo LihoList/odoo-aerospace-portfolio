@@ -534,7 +534,7 @@ class AeroNcr(models.Model):
             "type": "ir.actions.act_window",
             "name": _("Stock moves of %s") % self.name,
             "res_model": "stock.move",
-            "view_mode": "tree,form",
+            "view_mode": "list,form",
             "domain": [("id", "in", self._get_stock_moves().ids)],
         }
 

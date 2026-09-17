@@ -4,7 +4,7 @@
         <field name="name">aero.outtime.event.tree</field>
         <field name="model">aero.outtime.event</field>
         <field name="arch" type="xml">
-            <tree string="Out-time log" default_order="date_out desc"
+            <list string="Out-time log" default_order="date_out desc"
                   decoration-warning="not date_in">
                 <field name="date_out"/>
                 <field name="date_in"/>
@@ -14,7 +14,7 @@
                 <field name="user_id" optional="show"/>
                 <field name="note" optional="show"/>
                 <field name="company_id" groups="base.group_multi_company" optional="hide"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -61,7 +61,7 @@
     <record id="action_aero_outtime_event" model="ir.actions.act_window">
         <field name="name">Out-time log</field>
         <field name="res_model">aero.outtime.event</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_aero_outtime_event_search"/>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">No freezer removals logged yet</p>
