@@ -1,4 +1,4 @@
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 
 
 class StockLot(models.Model):
@@ -16,7 +16,7 @@ class StockLot(models.Model):
         self.ensure_one()
         return {
             "type": "ir.actions.act_window",
-            "name": _("NCRs of %s") % self.name,
+            "name": self.env._("NCRs of %s", self.name),
             "res_model": "aero.ncr",
             "view_mode": "list,form",
             "domain": [("lot_id", "=", self.id)],

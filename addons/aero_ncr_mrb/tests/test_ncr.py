@@ -22,7 +22,7 @@ class TestNcr(TransactionCase):
                     "name": login,
                     "login": login,
                     "email": f"{login}@example.com",
-                    "groups_id": [(6, 0, [cls.env.ref(g).id for g in groups])],
+                    "group_ids": [(6, 0, [cls.env.ref(g).id for g in groups])],
                 }
             )
 
@@ -39,7 +39,8 @@ class TestNcr(TransactionCase):
         cls.product = cls.env["product.product"].create(
             {
                 "name": "Ti bar (synthetic)",
-                "detailed_type": "product",
+                "type": "consu",
+                "is_storable": True,
                 "tracking": "lot",
             }
         )
@@ -93,7 +94,7 @@ class TestNcr(TransactionCase):
 
     def test_lot_must_match_product(self):
         other = self.env["product.product"].create(
-            {"name": "Other", "detailed_type": "product", "tracking": "lot"}
+            {"name": "Other", "type": "consu", "is_storable": True, "tracking": "lot"}
         )
         with self.assertRaises(ValidationError):
             self._ncr(product_id=other.id)

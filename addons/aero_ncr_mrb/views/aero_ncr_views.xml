@@ -111,11 +111,8 @@
                         </page>
                     </notebook>
                 </sheet>
-                <div class="oe_chatter">
-                    <field name="message_follower_ids"/>
-                    <field name="activity_ids"/>
-                    <field name="message_ids"/>
-                </div>
+                <!-- 19: the web client only compiles <chatter/>; the 17-style chatter div renders as a plain div -->
+                <chatter/>
             </form>
         </field>
     </record>
@@ -162,7 +159,7 @@
                 <filter name="critical" string="Critical" domain="[('severity', '=', 'critical')]"/>
                 <separator/>
                 <filter name="mine" string="Detected by me" domain="[('detected_by_id', '=', uid)]"/>
-                <group expand="0" string="Group By">
+                <group>
                     <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
                     <filter name="group_defect" string="Defect type" context="{'group_by': 'defect_type_id'}"/>
                     <filter name="group_severity" string="Severity" context="{'group_by': 'severity'}"/>

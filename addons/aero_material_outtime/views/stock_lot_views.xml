@@ -34,7 +34,9 @@
                     </group>
                 </group>
             </xpath>
-            <xpath expr="//page[@name='description']" position="after">
+            <!-- 19: the lot form has no notebook any more ("description" is a group) -->
+            <xpath expr="//group[@name='description']" position="after">
+                <notebook name="outtime_notebook">
                 <page string="Out-time log" name="outtime_log"
                       invisible="not outtime_limit_h and not outtime_event_ids">
                     <field name="outtime_event_ids">
@@ -47,6 +49,7 @@
                         </list>
                     </field>
                 </page>
+                </notebook>
             </xpath>
         </field>
     </record>

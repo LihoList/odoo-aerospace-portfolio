@@ -11,7 +11,7 @@ that consumed an expired lot.
 """,
     "author": "Daniil Lutsyk",
     "website": "https://github.com/LihoList/odoo-aerospace-portfolio",
-    "version": "17.0.1.0.0",
+    "version": "19.0.1.0.0",
     "category": "Manufacturing/Manufacturing",
     "license": "LGPL-3",
     "depends": ["mrp"],

@@ -13,7 +13,7 @@ corrective action. Everything is tracked in the chatter and printable as a PDF.
 """,
     "author": "Daniil Lutsyk",
     "website": "https://github.com/LihoList/odoo-aerospace-portfolio",
-    "version": "17.0.1.0.0",
+    "version": "19.0.1.0.0",
     "category": "Manufacturing/Quality",
     "license": "LGPL-3",
     "depends": ["mrp"],

@@ -1,4 +1,4 @@
-from odoo import _, models
+from odoo import models
 from odoo.exceptions import UserError
 
 
@@ -17,10 +17,10 @@ class MrpProduction(models.Model):
             )
             if expired:
                 raise UserError(
-                    _(
+                    self.env._(
                         "Out-time exceeded, consumption blocked for lot(s): %s. "
-                        "Raise a nonconformance and quarantine the material."
+                        "Raise a nonconformance and quarantine the material.",
+                        ", ".join(expired.mapped("name")),
                     )
-                    % ", ".join(expired.mapped("name"))
                 )
         return super().button_mark_done()

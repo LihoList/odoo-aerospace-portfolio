@@ -17,12 +17,17 @@ class TestOuttime(TransactionCase):
         cls.prepreg = cls.env["product.product"].create(
             {
                 "name": "Prepreg PX-100 (synthetic)",
-                "detailed_type": "product",
+                "type": "consu",
+                "is_storable": True,
                 "tracking": "lot",
             }
         )
         cls.panel = cls.env["product.product"].create(
-            {"name": "Composite Panel (synthetic)", "detailed_type": "product"}
+            {
+                "name": "Composite Panel (synthetic)",
+                "type": "consu",
+                "is_storable": True,
+            }
         )
         cls.bom = cls.env["mrp.bom"].create(
             {

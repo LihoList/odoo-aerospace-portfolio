@@ -9,13 +9,15 @@
     <record id="product_bar_demo" model="product.product">
         <field name="name">Ti-6Al-4V bar stock 25 mm (synthetic)</field>
         <field name="default_code">MAT-TI-025</field>
-        <field name="detailed_type">product</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
         <field name="tracking">lot</field>
     </record>
     <record id="product_injector_demo" model="product.product">
         <field name="name">Injector Face Plate, AM (synthetic)</field>
         <field name="default_code">ENG-INJ-004</field>
-        <field name="detailed_type">product</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
         <field name="tracking">lot</field>
     </record>
 

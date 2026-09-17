@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo noupdate="1">
-    <!-- Internal location: material is still owned and counted, but segregated -->
+    <!-- Internal location: material is still owned and counted, but segregated.
+         Nonconforming material awaiting MRB disposition. Do not issue to production.
+         (19: stock.location has no "comment" field any more.) -->
     <record id="location_quarantine" model="stock.location">
         <field name="name">Quarantine</field>
         <field name="location_id" ref="stock.stock_location_stock"/>
         <field name="usage">internal</field>
         <field name="company_id" ref="base.main_company"/>
-        <field name="comment">Nonconforming material awaiting MRB disposition. Do not issue to production.</field>
     </record>
 </odoo>

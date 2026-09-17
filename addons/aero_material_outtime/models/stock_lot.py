@@ -1,4 +1,4 @@
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 from odoo.exceptions import UserError
 
 
@@ -54,7 +54,9 @@ class StockLot(models.Model):
         for lot in self:
             if lot.outtime_open:
                 raise UserError(
-                    _("Lot %s is already out of the freezer.") % lot.display_name
+                    self.env._(
+                        "Lot %s is already out of the freezer.", lot.display_name
+                    )
                 )
             self.env["aero.outtime.event"].create({"lot_id": lot.id, "date_out": now})
         return True
@@ -66,7 +68,7 @@ class StockLot(models.Model):
             open_events = lot.outtime_event_ids.filtered(lambda e: not e.date_in)
             if not open_events:
                 raise UserError(
-                    _("Lot %s is not out of the freezer.") % lot.display_name
+                    self.env._("Lot %s is not out of the freezer.", lot.display_name)
                 )
             open_events.write({"date_in": now})
         return True

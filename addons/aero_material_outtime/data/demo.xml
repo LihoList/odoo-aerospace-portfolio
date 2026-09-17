@@ -4,7 +4,8 @@
     <record id="product_prepreg_demo" model="product.product">
         <field name="name">Prepreg CF/Epoxy 200 gsm (synthetic)</field>
         <field name="default_code">MAT-PP-200</field>
-        <field name="detailed_type">product</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
         <field name="tracking">lot</field>
         <field name="description">Freezer-stored composite prepreg. Spec out-time limit: 240 h cumulative at 21 C.</field>
     </record>
@@ -12,7 +13,8 @@
     <record id="product_panel_demo" model="product.product">
         <field name="name">Interstage Composite Panel (synthetic)</field>
         <field name="default_code">STR-PNL-010</field>
-        <field name="detailed_type">product</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
     </record>
 
     <record id="bom_panel_demo" model="mrp.bom">

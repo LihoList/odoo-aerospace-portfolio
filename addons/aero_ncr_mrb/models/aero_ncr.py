@@ -1,6 +1,5 @@
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 from odoo.exceptions import AccessError, UserError, ValidationError
-from odoo.tools import float_compare
 
 GROUP_USER = "aero_ncr_mrb.group_aero_ncr_user"
 GROUP_MANAGER = "aero_ncr_mrb.group_aero_quality_manager"
@@ -73,7 +72,8 @@ class AeroNcr(models.Model):
         "Quantity",
         required=True,
         default=1.0,
-        digits="Product Unit of Measure",
+        # 19: decimal precision "Product Unit of Measure" was renamed "Product Unit"
+        digits="Product Unit",
         tracking=True,
     )
     defect_type_id = fields.Many2one(
@@ -147,23 +147,22 @@ class AeroNcr(models.Model):
     @api.constrains("qty_nonconforming")
     def _check_qty(self):
         for ncr in self:
-            if (
-                float_compare(
-                    ncr.qty_nonconforming,
-                    0,
-                    precision_rounding=ncr.product_uom_id.rounding,
+            # 19: uom.uom.compare() replaces float_compare(precision_rounding=uom.rounding)
+            if ncr.product_uom_id.compare(ncr.qty_nonconforming, 0.0) <= 0:
+                raise ValidationError(
+                    self.env._("The nonconforming quantity must be positive.")
                 )
-                <= 0
-            ):
-                raise ValidationError(_("The nonconforming quantity must be positive."))
 
     @api.constrains("lot_id", "product_id")
     def _check_lot_product(self):
         for ncr in self:
             if ncr.lot_id and ncr.lot_id.product_id != ncr.product_id:
                 raise ValidationError(
-                    _("Lot %s does not belong to product %s.")
-                    % (ncr.lot_id.name, ncr.product_id.display_name)
+                    self.env._(
+                        "Lot %s does not belong to product %s.",
+                        ncr.lot_id.name,
+                        ncr.product_id.display_name,
+                    )
                 )
 
     # ======================================================================
@@ -179,7 +178,7 @@ class AeroNcr(models.Model):
     def write(self, vals):
         if MRB_FIELDS & set(vals) and not self.env.user.has_group(GROUP_MANAGER):
             raise AccessError(
-                _(
+                self.env._(
                     "Only the Quality Manager (MRB) can record a disposition, root cause or corrective action."
                 )
             )
@@ -188,7 +187,7 @@ class AeroNcr(models.Model):
     def unlink(self):
         if any(ncr.state not in ("draft", "cancel") for ncr in self):
             raise UserError(
-                _(
+                self.env._(
                     "Only draft or cancelled NCRs can be deleted; close them instead to keep the record."
                 )
             )
@@ -200,35 +199,43 @@ class AeroNcr(models.Model):
     def _require_group(self, group_xmlid, what):
         if not self.env.user.has_group(group_xmlid):
             raise AccessError(
-                _("Only %s can %s.") % (self.env.ref(group_xmlid).full_name, what)
+                self.env._("Only %s can %s.", self.env.ref(group_xmlid).full_name, what)
             )
 
     def action_submit(self):
         """Draft -> Quarantined: move the nonconforming quantity into quarantine."""
         for ncr in self:
             if ncr.state != "draft":
-                raise UserError(_("Only draft NCRs can be submitted."))
+                raise UserError(self.env._("Only draft NCRs can be submitted."))
             if ncr.tracking != "none" and not ncr.lot_id:
                 raise UserError(
-                    _("Product %s is tracked: select the lot or serial number.")
-                    % ncr.product_id.display_name
+                    self.env._(
+                        "Product %s is tracked: select the lot or serial number.",
+                        ncr.product_id.display_name,
+                    )
                 )
             source = ncr._get_source_location()
             ncr.quarantine_move_id = ncr._create_done_move(
-                source, ncr._get_quarantine_location(), _("Quarantine %s") % ncr.name
+                source,
+                ncr._get_quarantine_location(),
+                self.env._("Quarantine %s", ncr.name),
             )
             ncr.state = "open"
             ncr._notify_quality_managers(
-                _("NCR %s submitted: material quarantined, MRB review needed.")
-                % ncr.name
+                self.env._(
+                    "NCR %s submitted: material quarantined, MRB review needed.",
+                    ncr.name,
+                )
             )
         return True
 
     def action_start_mrb(self):
-        self._require_group(GROUP_MANAGER, _("open an MRB review"))
+        self._require_group(GROUP_MANAGER, self.env._("open an MRB review"))
         for ncr in self:
             if ncr.state != "open":
-                raise UserError(_("Only quarantined NCRs can go to MRB review."))
+                raise UserError(
+                    self.env._("Only quarantined NCRs can go to MRB review.")
+                )
             ncr.write(
                 {
                     "state": "mrb",
@@ -239,14 +246,18 @@ class AeroNcr(models.Model):
         return True
 
     def action_engineering_approve(self):
-        self._require_group(GROUP_ENGINEERING, _("give engineering approval"))
+        self._require_group(GROUP_ENGINEERING, self.env._("give engineering approval"))
         for ncr in self:
             if ncr.state != "mrb":
-                raise UserError(_("Engineering approval is given during MRB review."))
+                raise UserError(
+                    self.env._("Engineering approval is given during MRB review.")
+                )
             if not ncr.requires_engineering:
                 raise UserError(
-                    _("Disposition '%s' does not need engineering approval.")
-                    % (ncr.disposition or "-")
+                    self.env._(
+                        "Disposition '%s' does not need engineering approval.",
+                        ncr.disposition or "-",
+                    )
                 )
             ncr.write(
                 {
@@ -255,25 +266,28 @@ class AeroNcr(models.Model):
                 }
             )
             ncr.message_post(
-                body=_("Engineering approval for disposition <b>%s</b>.")
-                % ncr.disposition
+                body=self.env._(
+                    "Engineering approval for disposition <b>%s</b>.", ncr.disposition
+                )
             )
         return True
 
     def action_disposition(self):
         """MRB review -> Dispositioned: execute the stock action for the decision."""
-        self._require_group(GROUP_MANAGER, _("record an MRB disposition"))
+        self._require_group(GROUP_MANAGER, self.env._("record an MRB disposition"))
         for ncr in self:
             if ncr.state != "mrb":
-                raise UserError(_("Dispositions are recorded during MRB review."))
+                raise UserError(
+                    self.env._("Dispositions are recorded during MRB review.")
+                )
             if not ncr.disposition:
-                raise UserError(_("Select a disposition first."))
+                raise UserError(self.env._("Select a disposition first."))
             if ncr.requires_engineering and not ncr.eng_approver_id:
                 raise UserError(
-                    _(
-                        "Disposition '%s' requires engineering approval before it can be applied."
+                    self.env._(
+                        "Disposition '%s' requires engineering approval before it can be applied.",
+                        ncr.disposition,
                     )
-                    % ncr.disposition
                 )
             handler = getattr(ncr, f"_apply_disposition_{ncr.disposition}")
             handler()
@@ -281,22 +295,24 @@ class AeroNcr(models.Model):
         return True
 
     def action_close(self):
-        self._require_group(GROUP_MANAGER, _("close an NCR"))
+        self._require_group(GROUP_MANAGER, self.env._("close an NCR"))
         for ncr in self:
             if ncr.state != "dispositioned":
-                raise UserError(_("Only dispositioned NCRs can be closed."))
+                raise UserError(self.env._("Only dispositioned NCRs can be closed."))
             if ncr.severity in ("major", "critical") and not (
                 ncr.root_cause and ncr.corrective_action
             ):
                 raise UserError(
-                    _(
+                    self.env._(
                         "Major and critical NCRs need a root cause and a corrective action before closing."
                     )
                 )
             if ncr.disposition == "return" and ncr.return_picking_id.state != "done":
                 raise UserError(
-                    _("The return transfer %s must be done before closing.")
-                    % ncr.return_picking_id.name
+                    self.env._(
+                        "The return transfer %s must be done before closing.",
+                        ncr.return_picking_id.name,
+                    )
                 )
             ncr.write(
                 {
@@ -310,24 +326,26 @@ class AeroNcr(models.Model):
     def action_cancel(self):
         for ncr in self:
             if ncr.state in ("closed", "cancel"):
-                raise UserError(_("Closed NCRs cannot be cancelled."))
+                raise UserError(self.env._("Closed NCRs cannot be cancelled."))
             if ncr.state != "draft":
-                ncr._require_group(GROUP_MANAGER, _("cancel a submitted NCR"))
+                ncr._require_group(GROUP_MANAGER, self.env._("cancel a submitted NCR"))
             if ncr.state in ("open", "mrb"):
                 # material is still in quarantine: put it back where it came from
                 ncr.release_move_id = ncr._create_done_move(
                     ncr._get_quarantine_location(),
                     ncr.quarantine_move_id.location_id,
-                    _("Release %s (cancelled)") % ncr.name,
+                    self.env._("Release %s (cancelled)", ncr.name),
                 )
             ncr.state = "cancel"
         return True
 
     def action_reset_draft(self):
-        self._require_group(GROUP_MANAGER, _("reset an NCR to draft"))
+        self._require_group(GROUP_MANAGER, self.env._("reset an NCR to draft"))
         for ncr in self:
             if ncr.state != "cancel":
-                raise UserError(_("Only cancelled NCRs can be reset to draft."))
+                raise UserError(
+                    self.env._("Only cancelled NCRs can be reset to draft.")
+                )
             ncr.write(
                 {
                     "state": "draft",
@@ -355,8 +373,11 @@ class AeroNcr(models.Model):
         if res is not True:
             # stock.scrap returned its "insufficient quantity" wizard instead of scrapping
             raise UserError(
-                _("Not enough of %s in quarantine to scrap %s.")
-                % (self.product_id.display_name, self.qty_nonconforming)
+                self.env._(
+                    "Not enough of %s in quarantine to scrap %s.",
+                    self.product_id.display_name,
+                    self.qty_nonconforming,
+                )
             )
         self.scrap_id = scrap
 
@@ -364,7 +385,7 @@ class AeroNcr(models.Model):
         self.ensure_one()
         if not self.partner_id:
             raise UserError(
-                _("Set the supplier on the NCR to create the return transfer.")
+                self.env._("Set the supplier on the NCR to create the return transfer.")
             )
         warehouse = self._get_warehouse()
         quarantine = self._get_quarantine_location()
@@ -381,7 +402,9 @@ class AeroNcr(models.Model):
                         0,
                         0,
                         {
-                            "name": _("Return to supplier %s") % self.name,
+                            "description_picking": self.env._(
+                                "Return to supplier %s", self.name
+                            ),
                             "product_id": self.product_id.id,
                             "product_uom_qty": self.qty_nonconforming,
                             "product_uom": self.product_uom_id.id,
@@ -422,16 +445,16 @@ class AeroNcr(models.Model):
         )
 
     def _apply_disposition_use_as_is(self):
-        self._release_to_stock(_("Release %s (use as is)") % self.name)
+        self._release_to_stock(self.env._("Release %s (use as is)", self.name))
 
     def _apply_disposition_rework(self):
-        self._release_to_stock(_("Release %s (rework)") % self.name)
-        self._notify_production(_("Rework per NCR %s") % self.name)
+        self._release_to_stock(self.env._("Release %s (rework)", self.name))
+        self._notify_production(self.env._("Rework per NCR %s", self.name))
 
     def _apply_disposition_repair(self):
-        self._release_to_stock(_("Release %s (repair)") % self.name)
+        self._release_to_stock(self.env._("Release %s (repair)", self.name))
         self._notify_production(
-            _("Repair per NCR %s (engineering approved)") % self.name
+            self.env._("Repair per NCR %s (engineering approved)", self.name)
         )
 
     # ---- stock helpers -----------------------------------------------------
@@ -441,7 +464,9 @@ class AeroNcr(models.Model):
             [("company_id", "=", self.company_id.id)], limit=1
         )
         if not warehouse:
-            raise UserError(_("No warehouse configured for %s.") % self.company_id.name)
+            raise UserError(
+                self.env._("No warehouse configured for %s.", self.company_id.name)
+            )
         return warehouse
 
     def _get_quarantine_location(self):
@@ -460,10 +485,10 @@ class AeroNcr(models.Model):
             )
         if not location:
             raise UserError(
-                _(
-                    "No Quarantine location for %s: create an internal location named 'Quarantine'."
+                self.env._(
+                    "No Quarantine location for %s: create an internal location named 'Quarantine'.",
+                    self.company_id.name,
                 )
-                % self.company_id.name
             )
         return location
 
@@ -489,7 +514,8 @@ class AeroNcr(models.Model):
         self.ensure_one()
         move = self.env["stock.move"].create(
             {
-                "name": name,
+                # 19: stock.move has no "name"; the label goes to the picking description
+                "description_picking": name,
                 "origin": self.name,
                 "company_id": self.company_id.id,
                 "product_id": self.product_id.id,
@@ -516,7 +542,7 @@ class AeroNcr(models.Model):
         )
         move._action_done()
         if move.state != "done":
-            raise UserError(_("Stock move %s could not be completed.") % name)
+            raise UserError(self.env._("Stock move %s could not be completed.", name))
         return move
 
     def _get_stock_moves(self):
@@ -532,7 +558,7 @@ class AeroNcr(models.Model):
         self.ensure_one()
         return {
             "type": "ir.actions.act_window",
-            "name": _("Stock moves of %s") % self.name,
+            "name": self.env._("Stock moves of %s", self.name),
             "res_model": "stock.move",
             "view_mode": "list,form",
             "domain": [("id", "in", self._get_stock_moves().ids)],
@@ -542,7 +568,8 @@ class AeroNcr(models.Model):
     def _notify_group(self, group_xmlid, summary):
         group = self.env.ref(group_xmlid, raise_if_not_found=False)
         users = (
-            group.users.filtered(lambda u: u.active and not u.share)
+            # 19: "users" is gone; all_user_ids = explicit + implied members (17 "users" semantics)
+            group.all_user_ids.filtered(lambda u: u.active and not u.share)
             if group
             else self.env["res.users"]
         )
