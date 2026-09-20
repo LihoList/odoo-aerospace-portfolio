@@ -9,6 +9,8 @@ ignore = ["E501"]
 
 [lint.per-file-ignores]
 "__init__.py" = ["F401", "I001"]
+# Fed to `odoo shell`, which injects `env` into the namespace.
+"scripts/seed-lab.py" = ["F821"]
 "__manifest__.py" = ["B018"]
 
 [lint.isort]
