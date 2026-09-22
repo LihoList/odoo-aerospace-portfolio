@@ -33,7 +33,8 @@ services:
     volumes:
       - ./addons:/mnt/extra-addons   # our modules (XML hot-reloaded with --dev=xml)
       - odoo-data:/var/lib/odoo      # filestore + sessions
-    command: ["--dev=xml", "--db-filter=^(dev|lab)$"]   # only the dev DB is visible in the browser; tests use their own DBs
+      - ./config/odoo.conf:/etc/odoo/odoo.conf   # master password etc. (copy from config/odoo.conf.example)
+    command: ["--dev=xml", "--db-filter=^(dev|lab.*)$"]   # dev + the lab training DB and its copies; tests use their own DBs
 
   mailpit:
     # Catches every e-mail Odoo sends. In Odoo: Outgoing mail server host=mailpit, port=1025.
