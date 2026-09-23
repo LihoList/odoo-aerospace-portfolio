@@ -32,6 +32,7 @@ services:
       PASSWORD: odoo
     volumes:
       - ./addons:/mnt/extra-addons   # our modules (XML hot-reloaded with --dev=xml)
+      - ../odoo-training/addons:/mnt/training-addons   # training modules built during the lessons
       - odoo-data:/var/lib/odoo      # filestore + sessions
       - ./config/odoo.conf:/etc/odoo/odoo.conf   # master password etc. (copy from config/odoo.conf.example)
     command: ["--dev=xml", "--db-filter=^(dev|lab.*)$"]   # dev + the lab training DB and its copies; tests use their own DBs

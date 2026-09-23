@@ -1,7 +1,7 @@
 ; Local sandbox config for the odoo:17.0 container (mounted at /etc/odoo/odoo.conf).
 ; Copy to config/odoo.conf. The real file is git-ignored.
 [options]
-addons_path = /mnt/extra-addons
+addons_path = /mnt/extra-addons,/mnt/training-addons
 data_dir = /var/lib/odoo
 ; Master password of the database manager (/web/database/manager): needed to
 ; back up, duplicate, restore or delete databases. Local sandbox only.
