@@ -5,7 +5,7 @@ on:
 
 jobs:
   test:
-    name: Install on fresh DB + tests (${{ matrix.module }})
+    name: Odoo 19 - install on fresh DB + tests (${{ matrix.module }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -14,15 +14,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Pull images
-        run: docker compose pull --quiet
+        run: docker compose -f docker-compose.19.yml pull --quiet
       - name: Run module tests on a fresh database
-        run: scripts/test.sh ${{ matrix.module }}
+        run: scripts/test19.sh ${{ matrix.module }}
       - name: Upload Odoo test log
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: odoo-test-log-${{ matrix.module }}
-          path: /tmp/odoo-test-${{ matrix.module }}.log
+          name: odoo19-test-log-${{ matrix.module }}
+          path: /tmp/odoo19-test-${{ matrix.module }}.log
 
   lint:
     name: pre-commit (ruff, xml, yaml)
