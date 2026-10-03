@@ -35,7 +35,7 @@ services:
       - ../odoo-training/addons:/mnt/training-addons   # training modules built during the lessons
       - odoo-data:/var/lib/odoo      # filestore + sessions
       - ./config/odoo.conf:/etc/odoo/odoo.conf   # master password etc. (copy from config/odoo.conf.example)
-    command: ["--dev=xml", "--db-filter=^(dev|lab.*)$"]   # dev + the lab training DB and its copies; tests use their own DBs
+    command: ["--dev=xml", "--db-filter=^(dev|lab.*|work)$"]   # dev + the lab training DB and its copies; tests use their own DBs
 
   mailpit:
     # Catches every e-mail Odoo sends. In Odoo: Outgoing mail server host=mailpit, port=1025.

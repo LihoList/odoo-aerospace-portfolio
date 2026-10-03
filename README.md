@@ -9,7 +9,7 @@ conventions so it is cheap to carry across major Odoo versions.
 |---|---|---|
 | [`aero_material_outtime`](addons/aero_material_outtime/) | Freezer-controlled composites (prepregs, film adhesives): cumulative out-time per lot, blocks MO completion on expired material | tests passing |
 | [`aero_ncr_mrb`](addons/aero_ncr_mrb/) | Nonconformance reports with automatic quarantine, MRB dispositions (use-as-is / rework / repair / scrap / return) that drive real stock moves, engineering-approval and CAPA gates, PDF | tests passing |
-| Migration case 17 -> 19 | Port a module with Odoo's `upgrade_code`, document what breaks and why | planned |
+| [Migration case 17 -> 19](https://github.com/LihoList/odoo-aerospace-portfolio/blob/migrate-19/docs/migration-rehearsal.md) | Both modules ported to Odoo 19 (branch `migrate-19`), full database upgrade 17 -> 18 -> 19 with OpenUpgrade, before/after reconciliation, breakage log with root causes | done, tests passing on 19 |
 
 ## Run it in 5 minutes
 
